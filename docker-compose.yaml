@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./bridge
+      dockerfile: Dockerfile
+    ports:
+      - "80:8005"
+    env_file:
+      - ./bridge/.env
