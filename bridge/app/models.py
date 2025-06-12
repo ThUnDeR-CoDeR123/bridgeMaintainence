@@ -1,0 +1,52 @@
+from datetime import datetime
+import json
+from sqlalchemy.orm import DeclarativeBase
+from typing import List, Optional
+from sqlalchemy import (
+    String, Integer, Boolean, DateTime, ForeignKey, func, Text,Float
+)
+from sqlalchemy.orm import ( Mapped, mapped_column, relationship)
+# -----------------------------------------------
+# Base with to_dict and to_json
+# -----------------------------------------------
+class Base(DeclarativeBase):
+    def to_dict(self, seen=None):
+        if seen is None:
+            seen = set()
+        if id(self) in seen:
+            return {}
+        seen.add(id(self))
+
+        data = {}
+        for column in self.__table__.columns:
+            val = getattr(self, column.name)
+            if isinstance(val, datetime):
+                data[column.name] = val.isoformat()
+            else:
+                data[column.name] = val
+
+        for rel_name in self.__mapper__.relationships.keys():
+            related_obj = getattr(self, rel_name)
+            if related_obj is not None:
+                if isinstance(related_obj, list):
+                    data[rel_name] = [item.to_dict(seen=seen) for item in related_obj]
+                else:
+                    data[rel_name] = related_obj.to_dict(seen=seen)
+
+        return data
+
+    def to_json(self):
+        return json.dumps(self.to_dict(), default=str)
+
+class HistorialData(Base):
+    __tablename__ = 'historial_data'
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    temperature: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # Optional temperature field
+    humidity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # Optional humidity field
+    pressure: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # Optional pressure field
+    vibration: Mapped[Optional[float]] = mapped_column(Float, nullable=True)  # Optional vibration field
+
+    def __repr__(self):
+        return f"<HistorialData(id={self.id}, timestamp={self.timestamp}, source={self.source})>"
