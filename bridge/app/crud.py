@@ -5,7 +5,7 @@ from typing import List, Optional
 
 # crud functions for HistorialData
 def get_historial_data(db: Session, skip: int = 0, limit: int = 100) -> List[HistorialData]:
-    return db.query(HistorialData).order_by(desc(HistorialData.timestamp)).offset(skip).limit(limit).all()
+    return db.query(HistorialData).order_by(HistorialData.timestamp).offset(skip).limit(limit).all()
 
 def get_historial_data_by_id(db: Session, id: int) -> Optional[HistorialData]:
     return db.query(HistorialData).filter(HistorialData.id == id).first()
