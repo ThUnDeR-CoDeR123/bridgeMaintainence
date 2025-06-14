@@ -136,13 +136,13 @@ async def write_flag(flag_value: int) -> dict:
 
 #crud routes
 
-@app.get('/historial_data', response_model=list)
+@app.get('/historial_data')
 def read_historial_data(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db = next(get_db())
     data = get_historial_data(db, skip=skip, limit=limit)
     return data
 
-@app.get('/historial_data/{id}', response_model=dict)
+@app.get('/historial_data/{id}')
 def read_historial_data_by_id(id: int, db: Session = Depends(get_db)):
     db = next(get_db())
     data = get_historial_data_by_id(db, id=id)
@@ -150,7 +150,7 @@ def read_historial_data_by_id(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data not found")
     return data
 
-@app.post('/historial_data', response_model=dict)
+@app.post('/historial_data')
 def create_historial_data_endpoint(
     temperature: float = None, 
     humidity: float = None, 
