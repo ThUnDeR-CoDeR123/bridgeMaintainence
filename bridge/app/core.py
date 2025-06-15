@@ -191,7 +191,7 @@ def prediction_task():
         with next(get_db()) as db:
             #get historical and current data
             print("retrieving data")
-            data = get_historial_data(db)
+            data = get_historial_data(db,1,100)
             last = data.pop()
             current_data = {
                     "temperature": str(last.temperature),
